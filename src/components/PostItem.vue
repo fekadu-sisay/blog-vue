@@ -19,7 +19,7 @@ const { deletePost, savePost } = postStore;
           delete
         </button>
         <button class="save material-icons" @click="savePost(post.id)">
-          bookmark_border
+          {{ post.is_saved ? "bookmark" : "bookmark_border" }}
         </button>
       </div>
     </div>
