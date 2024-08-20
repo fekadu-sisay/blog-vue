@@ -6,7 +6,7 @@ export const usePostsStore = defineStore("posts-store", {
     return {
       posts: [],
       loading: true,
-      errMsg: "kfjsdkfj",
+      errMsg: "",
     };
   },
   // computed
@@ -37,25 +37,52 @@ export const usePostsStore = defineStore("posts-store", {
         })
         .catch((err) => {
           this.errMsg = "Something went wrong";
+          this.loading = false;
           console.log(err);
         });
     },
+
     addPost(post) {
-      this.posts.push({
-        id: this.posts.length + 1,
+      console.log(post);
+
+      const newPost = {
+        id: `${this.posts.length + 1}`,
         title: post.title,
         body: post.body,
         author: "Don John",
         created_at: new Date().toLocaleDateString(),
         is_saved: false,
-      });
+      };
+
+      this.posts.push(newPost);
+
+      fetch("http://localhost:8000/posts", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(newPost),
+      }).catch((err) => console.log(err));
     },
     deletePost(id) {
-      this.posts = this.posts.filter((post) => post.id !== id);
+      console.log(id);
+      this.posts = this.posts.filter((post) => post.id != id);
+
+      fetch(`http://localhost:8000/posts/${id}`, {
+        method: "DELETE",
+      }).catch((err) => console.log(err));
     },
     savePost(id) {
       const post = this.posts.find((post) => post.id === id);
       post.is_saved = !post.is_saved;
+
+      fetch(`http://localhost:8000/posts/${id}`, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ is_saved: post.is_saved }),
+      }).catch((err) => console.log(err));
     },
   },
 });

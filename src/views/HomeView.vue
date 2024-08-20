@@ -1,12 +1,14 @@
 <script setup>
 import { usePostsStore } from "@/stores/posts";
-import { storeToRefs } from "pinia";
 import { ref } from "vue";
 import PostItem from "@/components/PostItem.vue";
 import MyWrapper from "@/components/MyWrapper.vue";
+import { storeToRefs } from "pinia";
 
 const postsStore = usePostsStore();
 const postFilter = ref("all");
+
+const { sorted, errMsg, saved, loading } = storeToRefs(postsStore);
 
 const setPostFilter = () => {
   postFilter.value = postFilter.value === "all" ? "saved" : "all";
@@ -57,8 +59,6 @@ export default {
     </div>
   </div>
 
-  <div class="error" v-if="posts.errMsg">{{ postsStore.errMsg }}</div>
-
   <div v-if="postFilter === 'saved'">
     <div v-for="post in saved" :key="post.id">
       <MyWrapper>
@@ -66,6 +66,8 @@ export default {
       </MyWrapper>
     </div>
   </div>
+
+  <div class="error" v-if="errMsg">{{ errMsg }}</div>
 </template>
 
 <style lang="scss" scoped>
